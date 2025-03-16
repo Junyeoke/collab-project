@@ -31,3 +31,9 @@ o
 ?src/main/java/com/example/collabplatform/model/ChatMessage.java,3/1/310b4622ee269a3ad23a15544f0f7ab4a50ed6bb
 w
 Gsrc/main/java/com/example/collabplatform/controller/ChatController.java,6/b/6b4c8a700748231606ba3b6935863132a0455397
+~
+Nsrc/main/java/com/example/collabplatform/repository/ChatMessageRepository.java,5/6/56239748250129dbd447728650a6156f568c3c14
+q
+Asrc/main/java/com/example/collabplatform/service/ChatService.java,7/5/756a5233158e55527997374c16dbe458bac4d083
+7
+gradlew,5/b/5bbfa66edb4db3c7c33c5181f43510990d3307f9
