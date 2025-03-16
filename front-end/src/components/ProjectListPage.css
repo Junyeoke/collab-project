@@ -1,13 +1,58 @@
-.project-create-card {
-    transition: background-color 0.3s, transform 0.3s;
+/* src/components/ProjectListPage.css */
+
+/* 전체 컨테이너 */
+.project-list-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
   }
   
+  /* 프로젝트 생성 카드(+) */
+  .project-create-card {
+    transition: transform 0.3s, background-color 0.3s;
+  }
   .project-create-card:hover {
-    background-color: #e9f5ff;  /* 원하는 색상으로 변경 */
+    background-color: #e9f5ff;
     transform: scale(1.02);
   }
-
+  
+  /* 실제 프로젝트 카드 */
+  .project-card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+  }
+  .project-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  /* 카드 제목 */
+  .project-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  /* 카드 설명 */
+  .project-card-description {
+    color: #6c757d; /* Bootstrap text-secondary 계열 */
+    white-space: pre-line; /* 여러 줄 설명 시 줄바꿈 유지 */
+  }
+  
+  /* 추가 정보(마감일, 태그, 우선순위 등) */
+  .project-card-info p {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* 모달 둥근 모서리 */
   .rounded-modal .modal-content {
-    border-radius: 20px;
-    /* 필요 시 추가 스타일 적용 가능 */
+    border-radius: 15px;
+  }
+  
+  /* 모달 헤더 - 이미 bg-primary, text-white 사용 중 */
+  
+  /* 모달에서 버튼 Hover 시 애니메이션 추가 */
+  .rounded-modal .btn-primary:hover {
+    filter: brightness(1.1);
+    transition: 0.2s;
   }

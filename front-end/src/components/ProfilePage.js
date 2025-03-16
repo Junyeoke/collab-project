@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import defaultProfile from '../assets/images/default_profile.png'; // 기본 프로필 이미지
 
 function ProfilePage() {
   const navigate = useNavigate();
@@ -17,14 +18,16 @@ function ProfilePage() {
   const [loginId] = useState(initialUser.id || '');
   // 수정 가능한 사용자 이름, 이메일, 비밀번호
   const [username, setUsername] = useState(initialUser.username || '');
-  const [email, setEmail]       = useState(initialUser.email || '');
+  const [email, setEmail] = useState(initialUser.email || '');
   const [password, setPassword] = useState('');
-  const [errors, setErrors]     = useState({});
+  const [errors, setErrors] = useState({});
 
   // 프로필 이미지 파일과 미리보기 URL 상태
   const [profileImage, setProfileImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(
-    initialUser.profileImage ? `/uploads/profile-images/${initialUser.profileImage}` : null
+    initialUser.profileImage
+      ? `/uploads/profile-images/${initialUser.profileImage}`
+      : defaultProfile
   );
 
   // 폼 유효성 검사 함수
@@ -39,7 +42,6 @@ function ProfilePage() {
     } else if (!emailRegex.test(email)) {
       newErrors.email = '유효한 이메일 형식이 아닙니다.';
     }
-    // 비밀번호는 선택 입력: 입력한 경우 최소 6자 이상이어야 함.
     if (password && password.length < 6) {
       newErrors.password = '비밀번호는 최소 6자 이상이어야 합니다.';
     }
@@ -47,7 +49,7 @@ function ProfilePage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // 파일 선택 시 자동으로 이미지 업로드 처리
+  // 파일 선택 시 자동 업로드 처리
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -58,14 +60,11 @@ function ProfilePage() {
     handleUploadImage(file);
   };
 
-  // 프로필 이미지 업로드 함수 (file 매개변수 사용)
+  // 프로필 이미지 업로드 함수
   const handleUploadImage = (fileParam) => {
     const fileToUpload = fileParam || profileImage;
     if (!fileToUpload) {
-      Swal.fire({
-        icon: 'warning',
-        title: '프로필 이미지를 선택해주세요.'
-      });
+      Swal.fire({ icon: 'warning', title: '프로필 이미지를 선택해주세요.' });
       return;
     }
     const formData = new FormData();
@@ -74,42 +73,35 @@ function ProfilePage() {
     axios.post(`/api/users/${loginId}/upload-profile-image`, formData, {
       headers: { "Content-Type": "multipart/form-data" }
     })
-    .then(response => {
-      Swal.fire({
-        icon: 'success',
-        title: '프로필 이미지 업로드 성공'
+      .then(response => {
+        Swal.fire({ icon: 'success', title: '프로필 이미지 업로드 성공' });
+        const updatedUser = response.data;
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        // 업로드 후 반환된 이미지가 있으면 해당 경로로 업데이트, 그렇지 않으면 기본 이미지 유지
+        setPreviewImage(updatedUser.profileImage 
+          ? `/uploads/profile-images/${updatedUser.profileImage}`
+          : defaultProfile
+        );
+      })
+      .catch(error => {
+        console.error("프로필 이미지 업로드 실패:", error);
+        Swal.fire({ icon: 'error', title: '프로필 이미지 업로드 실패' });
       });
-      const updatedUser = response.data;
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setPreviewImage(`/uploads/profile-images/${updatedUser.profileImage}`);
-    })
-    .catch(error => {
-      console.error("프로필 이미지 업로드 실패:", error);
-      Swal.fire({
-        icon: 'error',
-        title: '프로필 이미지 업로드 실패'
-      });
-    });
   };
 
   // 프로필 이미지 삭제 함수
   const handleDeleteImage = () => {
     axios.delete(`/api/users/${loginId}/delete-profile-image`)
       .then(response => {
-        Swal.fire({
-          icon: 'success',
-          title: '프로필 이미지 삭제 성공'
-        });
+        Swal.fire({ icon: 'success', title: '프로필 이미지 삭제 성공' });
         const updatedUser = response.data;
         localStorage.setItem("user", JSON.stringify(updatedUser));
-        setPreviewImage(null);
+        // 이미지 삭제 후 기본 이미지로 업데이트
+        setPreviewImage(defaultProfile);
       })
       .catch(error => {
         console.error("프로필 이미지 삭제 실패:", error);
-        Swal.fire({
-          icon: 'error',
-          title: '프로필 이미지 삭제 실패'
-        });
+        Swal.fire({ icon: 'error', title: '프로필 이미지 삭제 실패' });
       });
   };
 
@@ -117,7 +109,7 @@ function ProfilePage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
     const payload = {
       id: loginId,       // 변경 불가능한 로그인 ID
       username,          // 수정 가능한 사용자 이름
@@ -126,7 +118,7 @@ function ProfilePage() {
     };
 
     axios.put(`/api/users/${loginId}`, payload)
-      .then((response) => {
+      .then(response => {
         Swal.fire({
           title: '정보 수정 성공',
           text: '회원 정보를 성공적으로 수정했습니다.',
@@ -137,7 +129,7 @@ function ProfilePage() {
           navigate("/");
         });
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("회원 정보 수정 실패:", error);
         Swal.fire({
           title: '수정 실패',
@@ -148,51 +140,53 @@ function ProfilePage() {
   };
 
   return (
-    <Container fluid className="p-5" style={{ background: 'linear-gradient(135deg, #4B79A1, #283E51)', minHeight: '100vh' }}>
-      <Row className="justify-content-center align-items-center">
+    <Container fluid className="py-5" style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+      <Row className="justify-content-center">
         <Col xs={12} md={8} lg={6}>
-          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <Card className="shadow-lg border-0" style={{ borderRadius: '20px', overflow: 'hidden', minWidth: '350px', width: '500px' }}>
-              <Card.Body className="p-5">
-                <h2 className="text-center text-primary mb-4">내 정보 수정</h2>
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <Card className="shadow rounded" style={{ border: 'none' }}>
+            {/* <h2 className="text-center mb-4 mt-4" style={{ color: '#007bff' }}>내 정보 수정</h2> */}
+              <Card.Body>
+                {/* 프로필 이미지를 최상단 가운데 배치 */}
+                <div className="text-center mb-4">
+                  <Image src={previewImage} roundedCircle style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                  {previewImage && previewImage !== defaultProfile && (
+                    <div className="mt-2">
+                      <Button variant="outline-danger" size="sm" onClick={handleDeleteImage}>
+                        사진 삭제
+                      </Button>
+                    </div>
+                  )}
+                </div>
+               
                 <Form onSubmit={handleSubmit}>
                   {/* 로그인 ID: 읽기 전용 */}
                   <Form.Group controlId="formLoginId" className="mb-3">
-                    <Form.Label>로그인 ID</Form.Label>
-                    <Form.Control type="text" placeholder="로그인 ID" value={loginId} readOnly />
+                    <Form.Label style={{ fontWeight: 'bold' }}>로그인 ID</Form.Label>
+                    <Form.Control type="text" value={loginId} readOnly />
                   </Form.Group>
-                  {/* 사용자 이름: 수정 가능 */}
+                  {/* 사용자 이름 */}
                   <Form.Group controlId="formUsername" className="mb-3">
-                    <Form.Label>사용자 이름</Form.Label>
+                    <Form.Label style={{ fontWeight: 'bold' }}>사용자 이름</Form.Label>
                     <Form.Control type="text" placeholder="사용자 이름" value={username} onChange={(e) => setUsername(e.target.value)} isInvalid={!!errors.username} />
                     <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
                   </Form.Group>
                   {/* 이메일 */}
                   <Form.Group controlId="formEmail" className="mb-3">
-                    <Form.Label>이메일</Form.Label>
+                    <Form.Label style={{ fontWeight: 'bold' }}>이메일</Form.Label>
                     <Form.Control type="email" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} isInvalid={!!errors.email} />
                     <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
                   </Form.Group>
                   {/* 비밀번호 (변경 시 입력) */}
                   <Form.Group controlId="formPassword" className="mb-3">
-                    <Form.Label>비밀번호 (변경 시 입력)</Form.Label>
+                    <Form.Label style={{ fontWeight: 'bold' }}>비밀번호 (변경 시 입력)</Form.Label>
                     <Form.Control type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} isInvalid={!!errors.password} />
                     <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                   </Form.Group>
                   {/* 프로필 이미지 업로드 */}
                   <Form.Group controlId="formProfileImage" className="mb-3">
-                    <Form.Label>프로필 사진</Form.Label>
+                    <Form.Label style={{ fontWeight: 'bold' }}>프로필 사진 변경</Form.Label>
                     <Form.Control type="file" onChange={handleFileChange} />
-                    {previewImage && (
-                      <div className="mt-2">
-                        <Image src={previewImage} roundedCircle style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-                      </div>
-                    )}
-                    {previewImage && (
-                      <Button variant="danger" className="mt-2" onClick={handleDeleteImage}>
-                        프로필 사진 삭제
-                      </Button>
-                    )}
                   </Form.Group>
                   <div className="text-center mt-4">
                     <Button variant="primary" type="submit" size="lg" style={{ borderRadius: '50px', padding: '10px 30px' }}>

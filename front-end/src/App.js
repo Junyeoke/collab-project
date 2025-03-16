@@ -9,6 +9,8 @@ import ProfilePage from './components/ProfilePage';
 import ProjectListPage from './components/ProjectListPage'; // 추가
 import LeftSidebar from './components/LeftSidebar';
 import UserList from './components/UserList';
+import ProjectDetailPage from './components/ProjectDetailPage';
+import ProjectSettingsPage from './components/ProjectSettingsPage';
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function MainLayout() {
             <Route path="/create-project" element={<CreateProjectPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/project-list" element={<ProjectListPage />} /> {/* 추가 */}
+            <Route path="/project/:id" element={<ProjectDetailPage />} />
+            <Route path="/project/:id/settings" element={<ProjectSettingsPage />} />
           </Routes>
         </div>
       </div>

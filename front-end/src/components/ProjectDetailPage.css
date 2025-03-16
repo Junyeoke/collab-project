@@ -1,0 +1,60 @@
+.project-detail-container {
+    max-width: 900px;
+    margin: auto;
+    background: #f9f9f9;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 프로젝트 헤더 스타일 */
+  .project-header {
+    text-align: center;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .project-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .project-description {
+    font-size: 1.1rem;
+    color: #555;
+    margin-top: 10px;
+  }
+  
+  /* 프로젝트 정보 섹션 */
+  .project-info-section {
+    margin-top: 30px;
+  }
+  
+  .info-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+  }
+  
+  .info-icon {
+    font-size: 1.8rem;
+    color: #007bff;
+    margin-right: 15px;
+  }
+  
+  .info-box h5 {
+    margin-bottom: 5px;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .info-box p {
+    margin: 0;
+    font-size: 1rem;
+    color: #555;
+  }
