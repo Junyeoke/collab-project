@@ -8,7 +8,6 @@ import './ProjectDetailPage.css'; // 스타일 추가
 
 function ProjectDetailPage() {
   const { id } = useParams(); // URL에서 프로젝트 ID 가져오기
-  const { projectId } = useParams(); // 이렇게 맞춰줘야 projectId가 제대로 들어옴
   const [project, setProject] = useState(null);
 
   useEffect(() => {

@@ -1,7 +1,12 @@
 
 r
-java:S1192("PDefine a constant instead of duplicating this literal "/topic/project." 5 times.(œüÂ»şÿÿÿÿ8–öóöÙ2
+java:S1192;"PDefine a constant instead of duplicating this literal "/topic/project." 5 times.(œüÂ»şÿÿÿÿ8·éÅøÙ2
 …
-java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8†ôÀöÙ2J$31095a9e-45d4-4dc0-9aaf-e6f798e7fdd4
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8“¯„øÙ2J$798bae64-62e3-4481-a6fc-fcd0a38e9b95
 …
-java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8†ôÀöÙ2J$c4981d83-e86f-45e1-ae97-7b00b7cde59d
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8“¯„øÙ2J$50a1a464-0ff9-4e27-bc18-c937e46e0d24
+…
+java:S6813!"BRemove this field injection and use constructor injection instead.(êæÄŞ8“¯„øÙ2J$38d44c02-2e14-4eb8-9c7e-a1cc7820bcaf
+…
+java:S6813&"BRemove this field injection and use constructor injection instead.(êæÄŞ8“¯„øÙ2J$6198458f-0e7e-4d0a-b769-0d44c6e44e50
+m	java:S106-"+Replace this use of System.out by a logger.(©©Û¡8Åş øÙ2J$4120acd8-8beb-4f8a-8823-03705e8742e7

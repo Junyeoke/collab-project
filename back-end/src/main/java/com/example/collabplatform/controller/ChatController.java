@@ -2,48 +2,63 @@ package com.example.collabplatform.controller;
 
 import com.example.collabplatform.model.ChatMessage;
 import com.example.collabplatform.model.User;
+import com.example.collabplatform.repository.ChatMessageRepository;
 import com.example.collabplatform.repository.UserRepository;
+import com.example.collabplatform.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Controller
+@RestController
+@RequestMapping("/api/chat")
 public class ChatController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    private UserRepository userRepository;  // 사용자 정보를 조회하기 위해 주입
+    private UserRepository userRepository;
 
-    // 프로젝트별 연결된 사용자를 관리 (키: 프로젝트 ID, 값: 사용자 이름 집합)
+    @Autowired
+    private ChatService chatService; // ChatMessage DB 저장용
+
     private ConcurrentHashMap<String, Set<String>> projectParticipants = new ConcurrentHashMap<>();
 
-    /**
-     * 클라이언트가 '/app/chat.sendMessage/{projectId}'로 메시지를 보내면,
-     * 해당 프로젝트의 채팅 토픽인 '/topic/project.{projectId}'로 메시지를 전달합니다.
-     */
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
+
+    // 특정 프로젝트의 모든 채팅 메시지를 시간순으로 조회
+    @GetMapping("/history/{projectId}")
+    public List<ChatMessage> getChatHistory(@PathVariable String projectId) {
+        List<ChatMessage> messages = chatMessageRepository.findByProjectIdOrderByTimestampAsc(projectId);
+        System.out.println("Chat History for " + projectId + ": " + messages); // 로그 추가
+        return messages;
+    }
+
     @MessageMapping("/chat.sendMessage/{projectId}")
     public void sendMessageToProject(@DestinationVariable String projectId, ChatMessage chatMessage) {
-        // 메시지 전송 전에 보내는 사용자의 프로필 이미지 조회
+        // 프로필 이미지 설정
         User senderUser = userRepository.findByUsername(chatMessage.getSender());
         if (senderUser != null) {
             chatMessage.setProfileImage(senderUser.getProfileImage());
         }
+        // (1) DB 저장
+        chatService.saveChatMessage(chatMessage);
+        // (2) WebSocket 브로드캐스트
         messagingTemplate.convertAndSend("/topic/project." + projectId, chatMessage);
     }
 
-    /**
-     * 클라이언트가 '/app/chat.addUser/{projectId}'로 메시지를 보내면,
-     * 사용자가 채팅방에 입장했음을 처리하고, 최신 참여자 목록과 입장 메시지를 브로드캐스트합니다.
-     */
     @MessageMapping("/chat.addUser/{projectId}")
     public void addUserToProject(@DestinationVariable String projectId, ChatMessage chatMessage) {
         projectParticipants.putIfAbsent(projectId, Collections.synchronizedSet(new HashSet<>()));
@@ -64,13 +79,12 @@ public class ChatController {
         if (senderUser != null) {
             joinMessage.setProfileImage(senderUser.getProfileImage());
         }
+        // DB 저장
+        chatService.saveChatMessage(joinMessage);
+        // WebSocket 브로드캐스트
         messagingTemplate.convertAndSend("/topic/project." + projectId, joinMessage);
     }
 
-    /**
-     * 클라이언트가 '/app/chat.removeUser/{projectId}'로 메시지를 보내면,
-     * 사용자가 채팅방에서 퇴장했음을 처리하고, 최신 참여자 목록과 퇴장 메시지를 브로드캐스트합니다.
-     */
     @MessageMapping("/chat.removeUser/{projectId}")
     public void removeUserFromProject(@DestinationVariable String projectId, ChatMessage chatMessage) {
         if (projectParticipants.containsKey(projectId)) {
@@ -88,6 +102,9 @@ public class ChatController {
             if (senderUser != null) {
                 leaveMessage.setProfileImage(senderUser.getProfileImage());
             }
+            // DB 저장
+            chatService.saveChatMessage(leaveMessage);
+            // WebSocket 브로드캐스트
             messagingTemplate.convertAndSend("/topic/project." + projectId, leaveMessage);
         }
     }

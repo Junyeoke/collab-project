@@ -133,12 +133,12 @@ function LeftSidebar() {
               </li>
               <hr className="sidebar-divider" />
               <div className="sidebar-heading">프로젝트</div>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link className="nav-link" to="/create-project">
                   <i className="fas fa-fw fa-folder-plus"></i>
                   <span>프로젝트 생성</span>
                 </Link>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <Link className="nav-link" to="/project-list">
                   <i className="fas fa-fw fa-list"></i>

@@ -1,3 +1,4 @@
+// src/components/ProjectChatPage.js
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Card, Form, Button, ListGroup, Image } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
@@ -12,20 +13,37 @@ function ProjectChatPage() {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [client, setClient] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [participants, setParticipants] = useState([]);
+  const [messages, setMessages] = useState([]); // 기존 메시지 + 실시간 메시지 저장
+  const [participants, setParticipants] = useState([]); // 참여자 목록
   const [messageInput, setMessageInput] = useState('');
-
-  // 채팅 메시지 영역 하단으로 스크롤하기 위한 ref
   const messageEndRef = useRef(null);
 
-  // 로그인 사용자 정보
-  const storedUser = localStorage.getItem('user');
+  // 로컬 스토리지에서 로그인 사용자 정보 가져오기
+  const storedUser = localStorage.getItem("user");
   const currentUser = storedUser ? JSON.parse(storedUser) : { username: '익명', profileImage: null };
 
+  // 1. 이전 채팅 기록 불러오기
+  useEffect(() => {
+    if (projectId) {
+      axios.get(`/api/chat/history/${projectId}`)
+        .then((response) => {
+          console.log("불러온 채팅 기록:", response.data);
+          setMessages(response.data);
+        })
+        .catch((error) => {
+          console.error("채팅 기록 불러오기 실패:", error);
+          Swal.fire({
+            icon: 'error',
+            title: '채팅 기록 불러오기 실패',
+            text: '과거 채팅 기록을 불러오지 못했습니다.'
+          });
+        });
+    }
+  }, [projectId]);
+
+  // 2. WebSocket 연결 및 실시간 메시지 수신
   useEffect(() => {
     const stompClient = new Client({
-      brokerURL: '',
       webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
       reconnectDelay: 5000,
       debug: (str) => console.log(str),
@@ -34,11 +52,11 @@ function ProjectChatPage() {
     stompClient.onConnect = () => {
       console.log('웹소켓 연결 성공');
 
-      // 채팅 메시지 토픽 구독
+      // 채팅 메시지 구독
       stompClient.subscribe(`/topic/project.${projectId}`, (message) => {
         if (message.body) {
           const receivedMessage = JSON.parse(message.body);
-          // JOIN/LEAVE 메시지라면 시스템 메시지로 처리
+          // 시스템 메시지 처리
           if (receivedMessage.type === 'JOIN') {
             receivedMessage.content = `${receivedMessage.sender}님이 입장하였습니다.`;
             receivedMessage.system = true;
@@ -46,24 +64,24 @@ function ProjectChatPage() {
             receivedMessage.content = `${receivedMessage.sender}님이 나갔습니다.`;
             receivedMessage.system = true;
           }
-          setMessages((prev) => [...prev, receivedMessage]);
+          setMessages(prev => [...prev, receivedMessage]);
         }
       });
 
-      // 참여자 목록 토픽 구독
+      // 참여자 목록 구독
       stompClient.subscribe(`/topic/project.${projectId}.participants`, (message) => {
         if (message.body) {
-          const updatedParticipants = JSON.parse(message.body);
-          setParticipants(updatedParticipants);
+          setParticipants(JSON.parse(message.body));
         }
       });
 
-      // 채팅방 입장 메시지 전송
+      // 채팅 입장 메시지 전송
       const joinMessage = {
         type: 'JOIN',
         sender: currentUser.username,
         content: '',
         timestamp: new Date().toISOString(),
+        projectId: projectId,
       };
       stompClient.publish({
         destination: `/app/chat.addUser/${projectId}`,
@@ -75,13 +93,13 @@ function ProjectChatPage() {
     setClient(stompClient);
 
     return () => {
-      // 채팅방 퇴장 메시지
       if (stompClient.connected) {
         const leaveMessage = {
           type: 'LEAVE',
           sender: currentUser.username,
           content: '',
           timestamp: new Date().toISOString(),
+          projectId: projectId,
         };
         stompClient.publish({
           destination: `/app/chat.removeUser/${projectId}`,
@@ -92,33 +110,32 @@ function ProjectChatPage() {
     };
   }, [projectId, currentUser.username]);
 
-  // 프로젝트 정보 불러오기
+  // 3. 프로젝트 정보 불러오기 (프로젝트 이름 표시용)
   useEffect(() => {
     if (projectId) {
-      axios
-        .get(`/api/projects/${projectId}`)
-        .then((response) => {
+      axios.get(`/api/projects/${projectId}`)
+        .then(response => {
           setProject(response.data);
         })
-        .catch((error) => {
-          console.error('프로젝트 정보 불러오기 실패:', error);
+        .catch(error => {
+          console.error("프로젝트 정보 불러오기 실패:", error);
           Swal.fire({
             icon: 'error',
             title: '프로젝트 정보 불러오기 실패',
-            text: '프로젝트 정보를 불러오지 못했습니다.',
+            text: '프로젝트 정보를 불러오지 못했습니다.'
           });
         });
     }
   }, [projectId]);
 
-  // messages가 바뀔 때마다 하단으로 스크롤
+  // 4. 메시지가 업데이트 될 때마다 스크롤 하단으로 이동
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
-  // 메시지 전송
+  // 메시지 전송 함수
   const sendMessage = (e) => {
     e.preventDefault();
     if (messageInput.trim() === '') return;
@@ -128,6 +145,7 @@ function ProjectChatPage() {
       sender: currentUser.username,
       content: messageInput.trim(),
       timestamp: new Date().toISOString(),
+      projectId: projectId,
     };
 
     if (client && client.connected) {
@@ -138,18 +156,18 @@ function ProjectChatPage() {
         });
         setMessageInput('');
       } catch (error) {
-        console.error('메시지 전송 오류:', error);
+        console.error("메시지 전송 오류:", error);
         Swal.fire({
           icon: 'error',
           title: '전송 오류',
-          text: '메시지 전송 중 문제가 발생했습니다.',
+          text: '메시지 전송 중 문제가 발생했습니다.'
         });
       }
     } else {
       Swal.fire({
         icon: 'error',
         title: '연결 오류',
-        text: '메시지를 전송할 수 없습니다. 연결 상태를 확인해주세요.',
+        text: '메시지를 전송할 수 없습니다. 연결 상태를 확인해주세요.'
       });
     }
   };
@@ -159,53 +177,41 @@ function ProjectChatPage() {
       <Row className="w-100">
         {/* 채팅 메시지 영역 */}
         <Col md={9}>
-          {/* Card를 flex 컨테이너로 만들어 헤더/바디/푸터 구조 유지 */}
           <Card style={{ height: '750px', display: 'flex', flexDirection: 'column' }}>
             <Card.Header className="bg-primary text-white">
+              {/* 프로젝트 정보가 로드되면 프로젝트 이름을 채팅방 헤더에 표시 */}
               {project ? (
                 <div>
-                  <strong>{project.name}</strong> - 프로젝트 채팅방
+                  프로젝트 채팅방 - <strong>{project.name}</strong>
                 </div>
               ) : (
-                '프로젝트 채팅방'
+                "프로젝트 채팅방"
               )}
             </Card.Header>
-
-            {/* Body를 flex:1로 잡고 overflowY 적용 -> 메시지 쌓일 때 스크롤 */}
             <Card.Body className="chat-body" style={{ flex: 1, overflowY: 'auto' }}>
               <ListGroup variant="flush">
                 {messages.map((msg, index) => {
                   const isOwnMessage = msg.sender === currentUser.username;
                   const isSystemMessage = msg.system;
-                  // 프로필 이미지: 내 메시지면 currentUser.profileImage, 아니면 msg.profileImage
-                  const profileSrc = isOwnMessage
+                  const profileSrc = isOwnMessage 
                     ? (currentUser.profileImage ? `/uploads/profile-images/${currentUser.profileImage}` : defaultProfile)
                     : (msg.profileImage ? `/uploads/profile-images/${msg.profileImage}` : defaultProfile);
-
+                  
                   if (isSystemMessage) {
                     return (
                       <ListGroup.Item key={index} className="system-message">
                         {msg.content}
-                        {msg.timestamp && (
-                          <div className="message-timestamp-small">
-                            {new Date(msg.timestamp).toLocaleString()}
-                          </div>
-                        )}
+                        <div className="message-timestamp-small">{new Date(msg.timestamp).toLocaleString()}</div>
                       </ListGroup.Item>
                     );
                   } else {
                     return (
-                      <ListGroup.Item
-                        key={index}
-                        className={isOwnMessage ? 'chat-message chat-message-sent' : 'chat-message chat-message-received'}
-                      >
+                      <ListGroup.Item key={index} className={isOwnMessage ? 'chat-message chat-message-sent' : 'chat-message chat-message-received'}>
                         <div className="chat-bubble">
                           <div className="message-header">
                             <Image src={profileSrc} roundedCircle className="message-profile" />
                             <span className="message-sender">{msg.sender}</span>
-                            {msg.timestamp && (
-                              <span className="message-timestamp">{new Date(msg.timestamp).toLocaleString()}</span>
-                            )}
+                            <span className="message-timestamp">{new Date(msg.timestamp).toLocaleString()}</span>
                           </div>
                           <div className="message-content">{msg.content}</div>
                         </div>
@@ -216,7 +222,6 @@ function ProjectChatPage() {
                 <div ref={messageEndRef} />
               </ListGroup>
             </Card.Body>
-
             <Card.Footer>
               <Form onSubmit={sendMessage} className="d-flex">
                 <Form.Control
@@ -232,13 +237,10 @@ function ProjectChatPage() {
             </Card.Footer>
           </Card>
         </Col>
-
         {/* 참여자 목록 영역 */}
         <Col md={3}>
           <Card style={{ height: '750px' }}>
-            <Card.Header className="bg-secondary text-white">
-              참여자 ({participants.length})
-            </Card.Header>
+            <Card.Header className="bg-secondary text-white">참여자 ({participants.length})</Card.Header>
             <Card.Body style={{ overflowY: 'auto' }}>
               {participants.length > 0 ? (
                 <ListGroup variant="flush">
