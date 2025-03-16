@@ -25,3 +25,9 @@ n
 >src/main/java/com/example/collabplatform/config/WebConfig.java,6/4/64bc0d952e212c047e70b2d66cb97962f649834c
 z
 Jsrc/main/java/com/example/collabplatform/repository/ProjectRepository.java,3/3/33896f25841cde1527ebfb9d5c01d9209816b00b
+t
+Dsrc/main/java/com/example/collabplatform/config/WebSocketConfig.java,e/c/ecd43a47124df0c144a805b3f317400de50cc6a2
+o
+?src/main/java/com/example/collabplatform/model/ChatMessage.java,3/1/310b4622ee269a3ad23a15544f0f7ab4a50ed6bb
+w
+Gsrc/main/java/com/example/collabplatform/controller/ChatController.java,6/b/6b4c8a700748231606ba3b6935863132a0455397
