@@ -1,6 +1,8 @@
 package com.example.collabplatform.controller;
 
 import com.example.collabplatform.model.ChatMessage;
+import com.example.collabplatform.model.User;
+import com.example.collabplatform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -18,7 +20,10 @@ public class ChatController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    // 프로젝트별 연결된 참여자 목록 (키: 프로젝트 ID, 값: 참여자 이름 집합)
+    @Autowired
+    private UserRepository userRepository;  // 사용자 정보를 조회하기 위해 주입
+
+    // 프로젝트별 연결된 사용자를 관리 (키: 프로젝트 ID, 값: 사용자 이름 집합)
     private ConcurrentHashMap<String, Set<String>> projectParticipants = new ConcurrentHashMap<>();
 
     /**
@@ -27,6 +32,11 @@ public class ChatController {
      */
     @MessageMapping("/chat.sendMessage/{projectId}")
     public void sendMessageToProject(@DestinationVariable String projectId, ChatMessage chatMessage) {
+        // 메시지 전송 전에 보내는 사용자의 프로필 이미지 조회
+        User senderUser = userRepository.findByUsername(chatMessage.getSender());
+        if (senderUser != null) {
+            chatMessage.setProfileImage(senderUser.getProfileImage());
+        }
         messagingTemplate.convertAndSend("/topic/project." + projectId, chatMessage);
     }
 
@@ -36,20 +46,24 @@ public class ChatController {
      */
     @MessageMapping("/chat.addUser/{projectId}")
     public void addUserToProject(@DestinationVariable String projectId, ChatMessage chatMessage) {
-        // 참여자 목록 초기화 후 추가
         projectParticipants.putIfAbsent(projectId, Collections.synchronizedSet(new HashSet<>()));
         projectParticipants.get(projectId).add(chatMessage.getSender());
 
-        // 참여자 목록 업데이트를 모든 클라이언트에 전송
+        // 참여자 목록 업데이트 전송
         messagingTemplate.convertAndSend("/topic/project." + projectId + ".participants", projectParticipants.get(projectId));
 
-        // 입장 메시지 생성 및 전송: "username(id)님이 입장하였습니다."
+        // 입장 메시지 생성 및 전송
         String joinContent = chatMessage.getSender() + "님이 입장하였습니다.";
         ChatMessage joinMessage = new ChatMessage();
         joinMessage.setType(ChatMessage.MessageType.JOIN);
         joinMessage.setSender(chatMessage.getSender());
         joinMessage.setContent(joinContent);
-        joinMessage.setTimestamp(chatMessage.getTimestamp()); // 혹은 LocalDateTime.now() 사용
+        joinMessage.setTimestamp(chatMessage.getTimestamp());
+        // 프로필 이미지 설정
+        User senderUser = userRepository.findByUsername(chatMessage.getSender());
+        if (senderUser != null) {
+            joinMessage.setProfileImage(senderUser.getProfileImage());
+        }
         messagingTemplate.convertAndSend("/topic/project." + projectId, joinMessage);
     }
 
@@ -61,16 +75,19 @@ public class ChatController {
     public void removeUserFromProject(@DestinationVariable String projectId, ChatMessage chatMessage) {
         if (projectParticipants.containsKey(projectId)) {
             projectParticipants.get(projectId).remove(chatMessage.getSender());
-            // 업데이트된 참여자 목록 전송
             messagingTemplate.convertAndSend("/topic/project." + projectId + ".participants", projectParticipants.get(projectId));
 
-            // 퇴장 메시지 생성 및 전송: "username(id)님이 나갔습니다."
             String leaveContent = chatMessage.getSender() + "님이 나갔습니다.";
             ChatMessage leaveMessage = new ChatMessage();
             leaveMessage.setType(ChatMessage.MessageType.LEAVE);
             leaveMessage.setSender(chatMessage.getSender());
             leaveMessage.setContent(leaveContent);
             leaveMessage.setTimestamp(chatMessage.getTimestamp());
+            // 프로필 이미지 설정
+            User senderUser = userRepository.findByUsername(chatMessage.getSender());
+            if (senderUser != null) {
+                leaveMessage.setProfileImage(senderUser.getProfileImage());
+            }
             messagingTemplate.convertAndSend("/topic/project." + projectId, leaveMessage);
         }
     }
