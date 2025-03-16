@@ -43,7 +43,7 @@ function MainLayout() {
             <Route path="/project/:id" element={<ProjectDetailPage />} />
             <Route path="/project/:id/settings" element={<ProjectSettingsPage />} />
             {/* 프로젝트 채팅방 페이지 */}
-            <Route path="/project/:id/chat" element={<ProjectChatPage />} />
+            <Route path="/project/:projectId/chat" element={<ProjectChatPage />} />
           </Routes>
         </div>
       </div>

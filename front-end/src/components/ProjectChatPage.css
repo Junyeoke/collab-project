@@ -1,47 +1,72 @@
-/* 시스템 메시지 */
-.system-message {
-    text-align: center;
-    background-color: #fff3cd;
-    border-radius: 8px;
-    margin: 10px auto;
-    max-width: 80%;
-    font-style: italic;
-    color: #856404;
+.project-chat-container {
+    background-color: #f5f5f5;
   }
   
-  /* 말풍선 공통 스타일 */
-  .chat-message {
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    border-radius: 10px;
-    max-width: 70%;
-    position: relative;
-    word-wrap: break-word;
+  .chat-body {
+    padding: 10px;
+    /* 메시지 영역의 배경색 및 여백 조정 */
   }
   
-  /* 내가 보낸 메시지 (오른쪽) */
-  .chat-message-sent {
-    background-color: #dcf8c6;
-    margin-left: auto; 
-  }
-  
-  /* 상대 메시지 (왼쪽) */
-  .chat-message-received {
+  .chat-bubble {
     background-color: #fff;
-    margin-right: auto; 
+    padding: 10px;
+    border-radius: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    position: relative;
+    max-width: 80%;
+  }
+  
+  .chat-message-sent .chat-bubble {
+    background-color: #dcf8c6; /* 내 메시지 말풍선 색상 */
+    margin-left: auto;
+    text-align: right;
+  }
+  
+  .chat-message-received .chat-bubble {
+    background-color: #fff;
+    margin-right: auto;
+    text-align: left;
+  }
+  
+  .message-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .message-profile {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
   }
   
   .message-sender {
     font-weight: bold;
-    margin-bottom: 4px;
-  }
-  
-  .message-content {
-    margin-bottom: 4px;
+    margin-right: 5px;
   }
   
   .message-timestamp {
     font-size: 0.75rem;
-    color: #999;
-    text-align: right;
+    color: #888;
+    margin-left: auto;
+  }
+  
+  .message-content {
+    font-size: 1rem;
+    margin-top: 5px;
+  }
+  
+  .system-message {
+    text-align: center;
+    font-style: italic;
+    background-color: #e9ecef;
+    color: #6c757d;
+    border-radius: 10px;
+    padding: 5px;
+  }
+  
+  .message-timestamp-small {
+    font-size: 0.65rem;
+    color: #aaa;
+    margin-top: 5px;
   }

@@ -1,5 +1,7 @@
 
 r
-java:S1192"PDefine a constant instead of duplicating this literal "/topic/project." 5 times.(œüÂ»şÿÿÿÿ8’ÌÌõÙ2
+java:S1192("PDefine a constant instead of duplicating this literal "/topic/project." 5 times.(œüÂ»şÿÿÿÿ8–öóöÙ2
 …
-java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8ÓğŸõÙ2J$92a4a21e-5941-45a3-9099-0703615d25c5
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8†ôÀöÙ2J$31095a9e-45d4-4dc0-9aaf-e6f798e7fdd4
+…
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8†ôÀöÙ2J$c4981d83-e86f-45e1-ae97-7b00b7cde59d
