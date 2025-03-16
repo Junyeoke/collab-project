@@ -239,3 +239,12 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/java,react,macos,windows,node
+back-end/.gradle/8.12.1/executionHistory/executionHistory.bin
+back-end/.gradle/8.12.1/executionHistory/executionHistory.lock
+back-end/.gradle/8.12.1/fileHashes/fileHashes.bin
+back-end/.gradle/8.12.1/fileHashes/fileHashes.lock
+back-end/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+back-end/.gradle/buildOutputCleanup/outputFiles.bin
+back-end/.gradle/file-system.probe
+back-end/build/reports/problems/problems-report.html
+back-end/uploads/profile-images/1742108005863_images.png
