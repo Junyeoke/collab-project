@@ -1,0 +1,13 @@
+.project-create-card {
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  
+  .project-create-card:hover {
+    background-color: #e9f5ff;  /* 원하는 색상으로 변경 */
+    transform: scale(1.02);
+  }
+
+  .rounded-modal .modal-content {
+    border-radius: 20px;
+    /* 필요 시 추가 스타일 적용 가능 */
+  }
