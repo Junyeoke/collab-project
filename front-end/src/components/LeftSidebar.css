@@ -1,0 +1,25 @@
+/* 사이드바 토글 버튼 스타일 */
+.sidebar-toggle-btn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1050;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+  }
+  
+  /* 모바일에서 사이드바를 오버레이 형태로 표시할 경우 추가 스타일 적용 가능 */
+  @media (max-width: 768px) {
+    .navbar-nav.sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      z-index: 1040;
+      transition: transform 0.3s ease-in-out;
+      transform: translateX(0);
+    }
+  }

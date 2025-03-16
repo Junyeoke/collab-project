@@ -1,10 +1,10 @@
-/* .project-chat-container {
+.project-chat-container {
     background-color: #f5f5f5;
-  } */
+  }
   
   .chat-body {
     padding: 10px;
-    /* 메시지 영역의 배경색 및 여백 조정 */
+    background-color: #ffffff;
   }
   
   .chat-bubble {
@@ -12,12 +12,11 @@
     padding: 10px;
     border-radius: 15px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    position: relative;
     max-width: 80%;
   }
   
   .chat-message-sent .chat-bubble {
-    background-color: #dcf8c6; /* 내 메시지 말풍선 색상 */
+    background-color: #dcf8c6;
     margin-left: auto;
     text-align: right;
   }
@@ -69,4 +68,22 @@
     font-size: 0.65rem;
     color: #aaa;
     margin-top: 5px;
+  }
+  
+  /* 모바일 화면 대응 (최대 너비 768px) */
+  @media (max-width: 768px) {
+    .message-profile {
+      width: 30px;
+      height: 30px;
+      margin-right: 5px;
+    }
+    .message-sender {
+      font-size: 0.9rem;
+    }
+    .message-timestamp {
+      font-size: 0.65rem;
+    }
+    .message-content {
+      font-size: 0.9rem;
+    }
   }
