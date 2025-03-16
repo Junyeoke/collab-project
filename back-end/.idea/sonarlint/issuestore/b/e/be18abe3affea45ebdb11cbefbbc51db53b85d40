@@ -1,0 +1,21 @@
+
+­
+java:S4449n"Annotate the parameter with @javax.annotation.Nullable in method 'cleanPath' declaration, or make sure that null can not be passed as argument.(ñ¤¦8¡™ôîÙ2
+ƒ
+java:S1192N"fDefine a constant instead of duplicating this literal "ì‚¬ìš©ìë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤." 3 times.(¯˜±…8¡™ôîÙ2
+_
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8¢™ôîÙ2
+_
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8¢™ôîÙ2
+C
+java:S1452&"&Remove usage of generic wildcard type.(ùä¤€8¤™ôîÙ2
+C
+java:S14520"&Remove usage of generic wildcard type.(®¸‘´8¤™ôîÙ2
+C
+java:S1452="&Remove usage of generic wildcard type.(ææó˜8¥™ôîÙ2
+H
+java:S1452K"&Remove usage of generic wildcard type.(¯‹ƒşÿÿÿÿ8¦™ôîÙ2
+H
+java:S1452`"&Remove usage of generic wildcard type.(ŠøŞãùÿÿÿÿ8§™ôîÙ2
+C
+java:S1452"&Remove usage of generic wildcard type.(—Ñ¡8ª™ôîÙ2
