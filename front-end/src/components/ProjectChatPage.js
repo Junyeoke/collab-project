@@ -1,4 +1,3 @@
-// src/components/ProjectChatPage.js
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Card, Form, Button, ListGroup, Image } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
@@ -56,7 +55,6 @@ function ProjectChatPage() {
       stompClient.subscribe(`/topic/project.${projectId}`, (message) => {
         if (message.body) {
           const receivedMessage = JSON.parse(message.body);
-          // 시스템 메시지 처리
           if (receivedMessage.type === 'JOIN') {
             receivedMessage.content = `${receivedMessage.sender}님이 입장하였습니다.`;
             receivedMessage.system = true;
@@ -128,14 +126,14 @@ function ProjectChatPage() {
     }
   }, [projectId]);
 
-  // 4. 메시지가 업데이트 될 때마다 스크롤 하단으로 이동
+  // 4. 메시지 업데이트 시 스크롤 하단으로 이동
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
-  // 메시지 전송 함수
+  // 5. 메시지 전송 함수
   const sendMessage = (e) => {
     e.preventDefault();
     if (messageInput.trim() === '') return;
@@ -173,13 +171,12 @@ function ProjectChatPage() {
   };
 
   return (
-    <Container className="py-5 project-chat-container d-flex align-items-center" style={{ minHeight: '100vh' }}>
+    <Container className="py-5 project-chat-container" style={{ minHeight: '100vh' }}>
       <Row className="w-100">
         {/* 채팅 메시지 영역 */}
-        <Col md={9}>
-          <Card style={{ height: '750px', display: 'flex', flexDirection: 'column' }}>
+        <Col xs={12} md={9}>
+          <Card className="mb-3" style={{ height: '750px', display: 'flex', flexDirection: 'column' }}>
             <Card.Header className="bg-primary text-white">
-              {/* 프로젝트 정보가 로드되면 프로젝트 이름을 채팅방 헤더에 표시 */}
               {project ? (
                 <div>
                   프로젝트 채팅방 - <strong>{project.name}</strong>
@@ -201,7 +198,9 @@ function ProjectChatPage() {
                     return (
                       <ListGroup.Item key={index} className="system-message">
                         {msg.content}
-                        <div className="message-timestamp-small">{new Date(msg.timestamp).toLocaleString()}</div>
+                        <div className="message-timestamp-small">
+                          {new Date(msg.timestamp).toLocaleString()}
+                        </div>
                       </ListGroup.Item>
                     );
                   } else {
@@ -238,8 +237,8 @@ function ProjectChatPage() {
           </Card>
         </Col>
         {/* 참여자 목록 영역 */}
-        <Col md={3}>
-          <Card style={{ height: '750px' }}>
+        <Col xs={12} md={3}>
+          <Card className="mb-3" style={{ height: '750px' }}>
             <Card.Header className="bg-secondary text-white">참여자 ({participants.length})</Card.Header>
             <Card.Body style={{ overflowY: 'auto' }}>
               {participants.length > 0 ? (
