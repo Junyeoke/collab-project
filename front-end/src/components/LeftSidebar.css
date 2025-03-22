@@ -1,25 +1,39 @@
 /* 사이드바 토글 버튼 스타일 */
 .sidebar-toggle-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1100; /* 다른 요소보다 위에 표시 */
+  background: rgba(0, 0, 0, 0.5); /* 반투명한 배경 */
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1.8rem;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.sidebar-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* 모바일에서 사이드바 오버레이 스타일 */
+@media (max-width: 768px) {
+  .navbar-nav.sidebar {
     position: fixed;
-    top: 10px;
-    left: 10px;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
     z-index: 1050;
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
+    background-color: #007bff; /* 사이드바 배경색 */
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%); /* 기본적으로 숨김 상태 */
   }
-  
-  /* 모바일에서 사이드바를 오버레이 형태로 표시할 경우 추가 스타일 적용 가능 */
-  @media (max-width: 768px) {
-    .navbar-nav.sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 250px;
-      height: 100%;
-      z-index: 1040;
-      transition: transform 0.3s ease-in-out;
-      transform: translateX(0);
-    }
+
+  /* 사이드바가 열릴 때 사용할 클래스 */
+  .navbar-nav.sidebar.show {
+    transform: translateX(0);
   }
+}

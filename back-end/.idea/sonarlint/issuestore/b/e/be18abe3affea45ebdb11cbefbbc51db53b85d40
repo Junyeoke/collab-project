@@ -1,21 +1,21 @@
 
-­
-java:S4449n"Annotate the parameter with @javax.annotation.Nullable in method 'cleanPath' declaration, or make sure that null can not be passed as argument.(ñ¤¦8¡™ôîÙ2
-ƒ
-java:S1192N"fDefine a constant instead of duplicating this literal "ì‚¬ìš©ìë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤." 3 times.(¯˜±…8¡™ôîÙ2
-_
-java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8¢™ôîÙ2
-_
-java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8¢™ôîÙ2
-C
-java:S1452&"&Remove usage of generic wildcard type.(ùä¤€8¤™ôîÙ2
-C
-java:S14520"&Remove usage of generic wildcard type.(®¸‘´8¤™ôîÙ2
-C
-java:S1452="&Remove usage of generic wildcard type.(ææó˜8¥™ôîÙ2
-H
-java:S1452K"&Remove usage of generic wildcard type.(¯‹ƒşÿÿÿÿ8¦™ôîÙ2
-H
-java:S1452`"&Remove usage of generic wildcard type.(ŠøŞãùÿÿÿÿ8§™ôîÙ2
-C
-java:S1452"&Remove usage of generic wildcard type.(—Ñ¡8ª™ôîÙ2
+Ó
+java:S4449n"Annotate the parameter with @javax.annotation.Nullable in method 'cleanPath' declaration, or make sure that null can not be passed as argument.(ñ¤¦8¡™ôîÙ2J$370e4886-320b-4487-bb0f-0bc45bafc883
+©
+java:S1192N"fDefine a constant instead of duplicating this literal "ì‚¬ìš©ìë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤." 3 times.(¯˜±…8¡™ôîÙ2J$420a3701-c4d5-4f6d-8d3e-f48ff5f08b80
+…
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8¢™ôîÙ2J$9c5b2f9b-8a12-4606-a40d-1db930a904d7
+…
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8¢™ôîÙ2J$ff552468-10d8-4ef5-8648-e0fbb7177bb3
+i
+java:S1452&"&Remove usage of generic wildcard type.(ùä¤€8¤™ôîÙ2J$0eb3e7b1-e84a-441a-a2b3-4526b575ac4e
+i
+java:S14520"&Remove usage of generic wildcard type.(®¸‘´8¤™ôîÙ2J$572d09f6-2514-4c71-b290-90828df8c6de
+i
+java:S1452="&Remove usage of generic wildcard type.(ææó˜8¥™ôîÙ2J$ef67a6ba-e6d0-481a-9612-66c9c622f3ea
+n
+java:S1452K"&Remove usage of generic wildcard type.(¯‹ƒşÿÿÿÿ8¦™ôîÙ2J$3ddefe01-60a6-4aa1-861f-d34e073aedc5
+n
+java:S1452`"&Remove usage of generic wildcard type.(ŠøŞãùÿÿÿÿ8§™ôîÙ2J$3b6e6009-1d8c-4ffd-9391-3790f238ef1f
+i
+java:S1452"&Remove usage of generic wildcard type.(—Ñ¡8ª™ôîÙ2J$e78bb450-9644-462e-8137-ea4e941cc367

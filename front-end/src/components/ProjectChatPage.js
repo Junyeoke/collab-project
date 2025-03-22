@@ -12,25 +12,29 @@ function ProjectChatPage() {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [client, setClient] = useState(null);
-  const [messages, setMessages] = useState([]); // 기존 메시지 + 실시간 메시지 저장
-  const [participants, setParticipants] = useState([]); // 참여자 목록
+  const [messages, setMessages] = useState([]);
+  const [participants, setParticipants] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const messageEndRef = useRef(null);
 
-  // 로컬 스토리지에서 로그인 사용자 정보 가져오기
   const storedUser = localStorage.getItem("user");
   const currentUser = storedUser ? JSON.parse(storedUser) : { username: '익명', profileImage: null };
+
+  // ✅ 0. 알림 권한 요청 (최초 1회)
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
 
   // 1. 이전 채팅 기록 불러오기
   useEffect(() => {
     if (projectId) {
       axios.get(`/api/chat/history/${projectId}`)
         .then((response) => {
-          console.log("불러온 채팅 기록:", response.data);
           setMessages(response.data);
         })
         .catch((error) => {
-          console.error("채팅 기록 불러오기 실패:", error);
           Swal.fire({
             icon: 'error',
             title: '채팅 기록 불러오기 실패',
@@ -40,7 +44,7 @@ function ProjectChatPage() {
     }
   }, [projectId]);
 
-  // 2. WebSocket 연결 및 실시간 메시지 수신
+  // 2. WebSocket 연결 및 메시지 수신
   useEffect(() => {
     const stompClient = new Client({
       webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
@@ -49,12 +53,10 @@ function ProjectChatPage() {
     });
 
     stompClient.onConnect = () => {
-      console.log('웹소켓 연결 성공');
-
-      // 채팅 메시지 구독
       stompClient.subscribe(`/topic/project.${projectId}`, (message) => {
         if (message.body) {
           const receivedMessage = JSON.parse(message.body);
+
           if (receivedMessage.type === 'JOIN') {
             receivedMessage.content = `${receivedMessage.sender}님이 입장하였습니다.`;
             receivedMessage.system = true;
@@ -62,18 +64,29 @@ function ProjectChatPage() {
             receivedMessage.content = `${receivedMessage.sender}님이 나갔습니다.`;
             receivedMessage.system = true;
           }
+
+          // ✅ 본인 메시지가 아니면 알림 띄우기
+          if (
+            receivedMessage.type === 'CHAT' &&
+            receivedMessage.sender !== currentUser.username &&
+            Notification.permission === "granted"
+          ) {
+            new Notification(`${receivedMessage.sender}님의 메시지`, {
+              body: receivedMessage.content,
+              icon: "/favicon.ico"
+            });
+          }
+
           setMessages(prev => [...prev, receivedMessage]);
         }
       });
 
-      // 참여자 목록 구독
       stompClient.subscribe(`/topic/project.${projectId}.participants`, (message) => {
         if (message.body) {
           setParticipants(JSON.parse(message.body));
         }
       });
 
-      // 채팅 입장 메시지 전송
       const joinMessage = {
         type: 'JOIN',
         sender: currentUser.username,
@@ -108,15 +121,12 @@ function ProjectChatPage() {
     };
   }, [projectId, currentUser.username]);
 
-  // 3. 프로젝트 정보 불러오기 (프로젝트 이름 표시용)
+  // 3. 프로젝트 정보 불러오기
   useEffect(() => {
     if (projectId) {
       axios.get(`/api/projects/${projectId}`)
-        .then(response => {
-          setProject(response.data);
-        })
-        .catch(error => {
-          console.error("프로젝트 정보 불러오기 실패:", error);
+        .then(response => setProject(response.data))
+        .catch(() => {
           Swal.fire({
             icon: 'error',
             title: '프로젝트 정보 불러오기 실패',
@@ -126,14 +136,14 @@ function ProjectChatPage() {
     }
   }, [projectId]);
 
-  // 4. 메시지 업데이트 시 스크롤 하단으로 이동
+  // 4. 메시지 스크롤 아래로
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
-  // 5. 메시지 전송 함수
+  // 5. 메시지 전송
   const sendMessage = (e) => {
     e.preventDefault();
     if (messageInput.trim() === '') return;
@@ -154,7 +164,6 @@ function ProjectChatPage() {
         });
         setMessageInput('');
       } catch (error) {
-        console.error("메시지 전송 오류:", error);
         Swal.fire({
           icon: 'error',
           title: '전송 오류',
@@ -173,27 +182,22 @@ function ProjectChatPage() {
   return (
     <Container className="py-5 project-chat-container" style={{ minHeight: '100vh' }}>
       <Row className="w-100">
-        {/* 채팅 메시지 영역 */}
         <Col xs={12} md={9}>
           <Card className="mb-3" style={{ height: '750px', display: 'flex', flexDirection: 'column' }}>
             <Card.Header className="bg-primary text-white">
               {project ? (
-                <div>
-                  프로젝트 채팅방 - <strong>{project.name}</strong>
-                </div>
-              ) : (
-                "프로젝트 채팅방"
-              )}
+                <div>프로젝트 채팅방 - <strong>{project.name}</strong></div>
+              ) : "프로젝트 채팅방"}
             </Card.Header>
             <Card.Body className="chat-body" style={{ flex: 1, overflowY: 'auto' }}>
               <ListGroup variant="flush">
                 {messages.map((msg, index) => {
                   const isOwnMessage = msg.sender === currentUser.username;
                   const isSystemMessage = msg.system;
-                  const profileSrc = isOwnMessage 
+                  const profileSrc = isOwnMessage
                     ? (currentUser.profileImage ? `/uploads/profile-images/${currentUser.profileImage}` : defaultProfile)
                     : (msg.profileImage ? `/uploads/profile-images/${msg.profileImage}` : defaultProfile);
-                  
+
                   if (isSystemMessage) {
                     return (
                       <ListGroup.Item key={index} className="system-message">
@@ -205,7 +209,9 @@ function ProjectChatPage() {
                     );
                   } else {
                     return (
-                      <ListGroup.Item key={index} className={isOwnMessage ? 'chat-message chat-message-sent' : 'chat-message chat-message-received'}>
+                      <ListGroup.Item
+                        key={index}
+                        className={isOwnMessage ? 'chat-message chat-message-sent' : 'chat-message chat-message-received'}>
                         <div className="chat-bubble">
                           <div className="message-header">
                             <Image src={profileSrc} roundedCircle className="message-profile" />
@@ -236,7 +242,6 @@ function ProjectChatPage() {
             </Card.Footer>
           </Card>
         </Col>
-        {/* 참여자 목록 영역 */}
         <Col xs={12} md={3}>
           <Card className="mb-3" style={{ height: '750px' }}>
             <Card.Header className="bg-secondary text-white">참여자 ({participants.length})</Card.Header>
