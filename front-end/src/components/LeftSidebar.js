@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import defaultProfile from '../assets/images/default_profile.png'; // 기본 프로필 이미지
-import './LeftSidebar.css'; // 추가할 CSS 파일
+import './LeftSidebar.css'; // 수정된 CSS 파일
 
 function LeftSidebar() {
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ function LeftSidebar() {
 
   return (
     <>
-      {/* 토글 버튼은 항상 화면 상단에 고정 */}
+      {/* 토글 버튼: 수정된 스타일 적용 */}
       <button className="sidebar-toggle-btn" onClick={toggleSidebar}>
         <i className="fas fa-bars"></i>
       </button>
@@ -143,14 +143,14 @@ function LeftSidebar() {
 
               {isAuthenticated && (
                 <>
-                  <hr className="sidebar-divider" />
-                  <div className="sidebar-heading">사용자</div>
-                  <li className="nav-item">
+                  {/* <hr className="sidebar-divider" /> */}
+                  {/* <div className="sidebar-heading">사용자</div> */}
+                  {/* <li className="nav-item">
                     <Link className="nav-link" to="/users">
                       <i className="fas fa-fw fa-user"></i>
                       <span>사용자 목록</span>
                     </Link>
-                  </li>
+                  </li> */}
                   <hr className="sidebar-divider" />
                   <div className="sidebar-heading">프로젝트</div>
                   <li className="nav-item">
