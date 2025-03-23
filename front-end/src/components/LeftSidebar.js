@@ -143,20 +143,18 @@ function LeftSidebar() {
 
               {isAuthenticated && (
                 <>
-                  {/* <hr className="sidebar-divider" /> */}
-                  {/* <div className="sidebar-heading">사용자</div> */}
-                  {/* <li className="nav-item">
-                    <Link className="nav-link" to="/users">
-                      <i className="fas fa-fw fa-user"></i>
-                      <span>사용자 목록</span>
-                    </Link>
-                  </li> */}
                   <hr className="sidebar-divider" />
                   <div className="sidebar-heading">프로젝트</div>
                   <li className="nav-item">
                     <Link className="nav-link" to="/project-list">
                       <i className="fas fa-fw fa-list"></i>
                       <span>프로젝트 목록</span>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/calendar">
+                      <i className="fas fa-calendar-alt"></i>
+                      <span>캘린더</span>
                     </Link>
                   </li>
                 </>
@@ -166,28 +164,34 @@ function LeftSidebar() {
 
           {/* 프로젝트 상세 페이지인 경우 */}
           {projectId && (
-            <>
-              <div className="sidebar-heading">프로젝트 관리</div>
-              <li className="nav-item">
-                <Link className="nav-link" to={`/project/${projectId}/settings`}>
-                  <i className="fas fa-cog"></i>
-                  <span>프로젝트 설정</span>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to={`/project/${projectId}/menu-settings`}>
-                  <i className="fas fa-bars"></i>
-                  <span>프로젝트 메뉴 설정</span>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to={`/project/${projectId}/chat`}>
-                  <i className="fas fa-comments"></i>
-                  <span>프로젝트 채팅방</span>
-                </Link>
-              </li>
-            </>
-          )}
+  <>
+    <div className="sidebar-heading">프로젝트 관리</div>
+    <li className="nav-item">
+      <Link className="nav-link" to={`/project/${projectId}/settings`}>
+        <i className="fas fa-cog"></i>
+        <span>프로젝트 설정</span>
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link className="nav-link" to={`/project/${projectId}/menu-settings`}>
+        <i className="fas fa-bars"></i>
+        <span>프로젝트 메뉴 설정</span>
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link className="nav-link" to={`/project/${projectId}/chat`}>
+        <i className="fas fa-comments"></i>
+        <span>프로젝트 채팅방</span>
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link className="nav-link" to={`/project/${projectId}/wbs`}>
+        <i className="fas fa-project-diagram"></i> {/* 또는 calendar-alt 등 아이콘 변경 가능 */}
+        <span>프로젝트 일정관리</span> {/* 또는 "WBS"로 명시 */}
+      </Link>
+    </li>
+  </>
+)}
 
           <hr className="sidebar-divider d-none d-md-block" />
         </ul>
