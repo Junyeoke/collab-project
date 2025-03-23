@@ -1,0 +1,21 @@
+/* FullCalendar 기본 스타일은 FullCalendar 라이브러리의 CSS에서 가져오므로, 
+   추가적인 커스터마이징이 필요한 경우에만 아래와 같이 작성합니다. */
+
+   .fc {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .fc .fc-toolbar-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .fc-button {
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+  }
+  
+  .fc-button:hover {
+    background-color: #0056b3;
+  }

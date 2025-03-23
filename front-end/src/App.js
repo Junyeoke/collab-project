@@ -12,6 +12,8 @@ import UserList from './components/UserList';
 import ProjectDetailPage from './components/ProjectDetailPage';
 import ProjectSettingsPage from './components/ProjectSettingsPage';
 import ProjectChatPage from './components/ProjectChatPage'; // 프로젝트 채팅방 페이지 추가
+import CalendarPage from './components/CalendarPage';
+import WBSPage from './components/WBSPage';
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function MainLayout() {
             <Route path="/project/:id/settings" element={<ProjectSettingsPage />} />
             {/* 프로젝트 채팅방 페이지 */}
             <Route path="/project/:projectId/chat" element={<ProjectChatPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/project/:projectId/wbs" element={<WBSPage />} />
           </Routes>
         </div>
       </div>
